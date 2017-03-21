@@ -10,7 +10,7 @@ from IoTHub import IoTHub
 
 class PiGate:
     def __init__(self):
-        self.iothub = IoTHub("2ada2125-4067-4385-9a5a-f7c4427757e1", "https://connectivity.myaxoom.com", False)
+        self.iothub = IoTHub("{gateId}", "https://{customerId}.myaxoom.com", False)
 
     def run(self):
         self.iothub.activate("0123456789")
@@ -25,10 +25,10 @@ class PiGate:
         while True:
             self.iothub.heartbeat()
 
-            self.observeDht(dht.DHT22, 6, "b38e7e44", "fe00895f")
-            self.observeDht(dht.DHT11, 5, "46bb3fa8", "9a7dbbe2")
-            self.observeReadContact(23, "9f5f3563")
-            self.observePir(18, "ed9eb94c")
+            #self.observeDht(dht.DHT22, 6, "{dsId}", "{dsId}")
+            #self.observeDht(dht.DHT11, 5, "{dsId}", "{dsId}")
+            #self.observeReadContact(23, "{dsId}")
+            #self.observePir(18, "{dsId}")
     
             time.sleep(2)
 
