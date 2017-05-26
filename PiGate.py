@@ -15,7 +15,7 @@ class PiGate:
     gpioStates = dict()
     onlySendUpdateOnChange = False
 
-    def __init__(self): <<<<<<< HEAD
+    def __init__(self):
         self.iothub = IoTHub("{generate GUID for gateId}", "https://{customerId}.myaxoom.com", False)
 
     def run(self):
