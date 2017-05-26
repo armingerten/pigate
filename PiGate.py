@@ -15,7 +15,7 @@ class PiGate:
     gpioStates = dict()
     onlySendUpdateOnChange = False
 
-    def __init__(self):
+    def __init__(self): <<<<<<< HEAD
         self.iothub = IoTHub("{generate GUID for gateId}", "https://{customerId}.myaxoom.com", False)
 
     def run(self):
@@ -28,8 +28,8 @@ class PiGate:
 
                 self.observeDht(dht.DHT22, 6, "b38e7e44", "fe00895f")
                 self.observeDht(dht.DHT11, 5, "46bb3fa8", "9a7dbbe2")
-                self.observeGPIO(22 , "412523d0") # Window 1 reed contact
-                self.observeGPIO(26 ,"633d8df6")  # Window 2 reed contact
+                self.observeGPIO(22, "412523d0") # Window 1 reed contact
+                self.observeGPIO(26, "633d8df6")  # Window 2 reed contact
                 self.observeGPIO(25, "aca899ea")  # Window 3 reed contact
                 self.observeGPIO(23, "40c1c680")  # Window 4 reed contact
                 self.observeGPIO(18, "c5ca96bd")  # Motion sensor 1
