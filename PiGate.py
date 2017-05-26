@@ -3,32 +3,41 @@
 # git clone git://github.com/kennethreitz/requests.git
 # sudo python setup.py install
 
+# If you are not using DHTs or GPIOs, remove dht/GPIO imports and all defs/references to oberserve* functions
+
 import time
 import Adafruit_DHT as dht
 import RPi.GPIO as GPIO
 from IoTHub import IoTHub
 
 class PiGate:
+
+    gpioStates = dict()
+    onlySendUpdateOnChange = False
+
     def __init__(self):
-        self.iothub = IoTHub("2ada2125-4067-4385-9a5a-f7c4427757e1", "https://connectivity.myaxoom.com", False)
+        self.iothub = IoTHub("{generate GUID for gateId}", "https://{customerId}.myaxoom.com", False)
 
     def run(self):
         self.iothub.activate("0123456789")
-
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(18, GPIO.IN)
-        GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
-        self.lastStateReadContact = -1
-        self.lastStatePir = -1
 
         while True:
-            self.iothub.heartbeat()
+            try:
+                self.iothub.heartbeat()
 
-            self.observeDht(dht.DHT22, 6, "b38e7e44", "fe00895f")
-            self.observeDht(dht.DHT11, 5, "46bb3fa8", "9a7dbbe2")
-            self.observeReadContact(23, "9f5f3563")
-            self.observePir(18, "ed9eb94c")
+                self.observeDht(dht.DHT22, 6, "b38e7e44", "fe00895f")
+                self.observeDht(dht.DHT11, 5, "46bb3fa8", "9a7dbbe2")
+                self.observeGPIO(22 , "412523d0") # Window 1 reed contact
+                self.observeGPIO(26 ,"633d8df6")  # Window 2 reed contact
+                self.observeGPIO(25, "aca899ea")  # Window 3 reed contact
+                self.observeGPIO(23, "40c1c680")  # Window 4 reed contact
+                self.observeGPIO(18, "c5ca96bd")  # Motion sensor 1
+                self.observeGPIO(24, "abb5ca5c")  # Motion sensor 2
+
+            except Exception as ex:
+                print("Exception occurred!")
+                print(ex)
     
             time.sleep(2)
 
@@ -37,14 +46,17 @@ class PiGate:
         self.iothub.observe(dsIdHumidity, h)
         self.iothub.observe(dsIdTemperature, t)
 
-    def observeReadContact(self, gpioPin, dsIdContact):
-        m = GPIO.input(gpioPin)
-        if (m != self.lastStateReadContact):
-            self.iothub.observe(dsIdContact, 'Open' if m else 'Closed')
-            self.lastStateReadContact = m
+    def observeGPIO(self, gpioPin, dsIdContact):
+        # Setup GPIO if necessary
+        if (not gpioPin in self.gpioStates):
+            print("PiGate.SetupGPIO {}".format(gpioPin))
+            GPIO.setup(gpioPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+            self.gpioStates[gpioPin] = -1
 
-    def observePir(self, gpioPin, dsIdPir):
-        p = GPIO.input(gpioPin)
-        if (p != self.lastStatePir):
-            self.iothub.observe(dsIdPir, 'Motion' if p else 'No motion')
-            self.lastStatePir = p
+        # Read GPIO
+        m = GPIO.input(gpioPin)
+        self.gpioStates[gpioPin] = m
+
+        # Skip sending if "onlySendUpdateOnChange" is activated and state did not change
+        if (not (self.onlySendUpdateOnChange and m == self.gpioStates[gpioPin])):
+            self.iothub.observe(dsIdContact, m)
