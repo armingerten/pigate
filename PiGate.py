@@ -1,14 +1,9 @@
-# Before running:
-# git clone https://github.com/adafruit/Adafruit_Python_DHT.git
-# git clone git://github.com/kennethreitz/requests.git
-# sudo python setup.py install
-
 # If you are not using DHTs or GPIOs, remove dht/GPIO imports and all defs/references to oberserve* functions
-
 import time
 import Adafruit_DHT as dht
 import RPi.GPIO as GPIO
 from IoTHub import IoTHub
+
 
 class PiGate:
 
