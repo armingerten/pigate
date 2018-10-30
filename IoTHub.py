@@ -7,7 +7,7 @@ class IoTHub:
     def __init__ (self, gateId, endpoint, verifySslCertificate):
         self.gateId = gateId
         self.endpoint = endpoint
-        self.baseUrl = endpoint + "/app/axoom-iotmgmt/api/iot/v1"
+        self.baseUrl = endpoint + "/iot/v1"
         self.verifySslCertificate = verifySslCertificate
 
         self.httpClient = requests.Session()

@@ -11,7 +11,7 @@ class PiGate:
     onlySendUpdateOnChange = False
 
     def __init__(self):
-        self.iothub = IoTHub("{generate GUID for gateId}", "https://{customerId}.myaxoom.com", False)
+        self.iothub = IoTHub("{generate GUID for gateId}", "https://iothub-{customerId}.myaxoom.com", False)
 
     def run(self):
         self.iothub.activate("0123456789")
